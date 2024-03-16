@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+}
+.advertise{
+    height: 3rem ;
+    text-align: center;
+
+}
+.advertise p{
+    color: rgba(255, 255, 255, 0.834);
+    font-size: large;
+    padding-top: 10px;
+}
+
+.tagline{
+    max-height: auto;
+    text-align: center;
+    padding: 50px;
+}
+
+.tagline p{
+    padding-top: 20px;
+    font-size: 25px;
+}
+
+
+.todo-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 5px;
+    
+}
+
+.todo-container h1 {
+    text-align: center;
+}
+
+.todo-container input[type="text"] {
+    width: 70%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.todo-container  a {
+    text-decoration: none;
+    color: #3d8141;
+}
+
+.todo-container button:hover {
+    background-color: #5cca64;
+    
+}
+
+.todo-container li {
+    list-style-type: none;
+    margin-bottom: 5px;
+}
+
+.todo-container .completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.ingredients{
+    max-height: auto;
+    max-width: 80%;
+    padding: 15px;
+    border: black 1px solid;
+    border-radius: 5px;
+}
+
+.recipes {
+    display: inline-flex;
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    align-items: center;
+}
+
+.card {
+    width: 18rem;
+    margin: 0.5rem;
+    transition: transform 0.3s ease; /* Add smooth transition effect */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Scale up the card on hover */
+}
