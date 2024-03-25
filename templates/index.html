@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- <link href="style.css" rel="stylesheet"> -->
+  <title>Recipe Recommendation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .advertise {
+      height: 3rem;
+      text-align: center;
+
+    }
+
+    .advertise p {
+      color: rgba(255, 255, 255, 0.834);
+      font-size: large;
+      padding-top: 10px;
+    }
+
+    .tagline {
+      max-height: auto;
+      text-align: center;
+      padding: 50px;
+    }
+
+    .tagline p {
+      padding-top: 20px;
+      font-size: 25px;
+    }
+
+
+    .todo-container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 5px;
+
+    }
+
+    .todo-container h1 {
+      text-align: center;
+    }
+
+    .todo-container input[type="text"] {
+      width: 50%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .todo-container a {
+      text-decoration: none;
+      color: #3d8141;
+    }
+
+    .todo-container button:hover {
+      background-color: #5cca64;
+
+    }
+
+    .todo-container li {
+      list-style-type: none;
+      margin-bottom: 5px;
+    }
+
+    .todo-container .completed {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    .ingredients {
+      max-height: auto;
+      max-width: 80%;
+      padding: 15px;
+      border: black 1px solid;
+      border-radius: 5px;
+    }
+
+    .recipes {
+      display: inline-flex;
+      flex-wrap: wrap;
+      /* Allow items to wrap to the next line */
+      align-items: center;
+    }
+
+    .card {
+      width: 18rem;
+      margin: 0.5rem;
+      transition: transform 0.3s ease;
+      /* Add smooth transition effect */
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      /* Scale up the card on hover */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="advertise" style="background-color: rgba(0, 0, 0, 0.847);">
+    <p>Get Your Favourite Food Recipe Here!!</p>
+  </div>
+  <!-- Navbar content -->
+  <nav class="navbar navbar-expand-lg bg-body-tertiary mx-5 my-2" style="background-color: #7caccf;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Veggify</a>
+      <form class="d-flex" action="{{url_for('predict')}}" method="POST"  role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class=" collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mx-5">
+          <li class="nav-item">
+            <a class="nav-link active fs-5 mx-3" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fs-5 mx-3" href="#">Link</a>
+          </li>
+
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+  <!-- </nav> -->
+
+  <div class="tagline">
+    <h1>Recipes that make your taste buds sing.</h1>
+    <p>Cook like a pro with our help</p>
+  </div>
+
+  <!-- Ingredients  list-->
+
+  <div class="todo-container ">
+    <form class="flex " action="{{url_for('search')}}" method="POST" role="search">
+      <input class="form-control me-2" type="search" id="taskInput" placeholder="Add your Ingredients"
+        aria-label="Search">
+      <button class="btn btn-outline-success my-2" onclick="addTask(event)">Add</button>
+      <div class="ingredients my-3">
+        <p style="font-size: large;">Ingredients:</p>
+        <ul id="taskList">
+          <!-- Tasks will be added dynamically here -->
+        </ul>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+
+      </div>
+    </form>
+  </div>
+  <script>
+    function addTask(event) {
+      event.preventDefault(); // Prevent the default form submission behavior
+
+      var taskInput = document.getElementById("taskInput");
+      var taskList = document.getElementById("taskList");
+
+      if (taskInput.value === "") {
+        alert("Please enter an ingredient.");
+        return;
+      }
+
+      var li = document.createElement("li");
+      li.textContent = taskInput.value;
+
+      li.onclick = function () {
+        this.classList.toggle("completed");
+      };
+
+      taskList.appendChild(li);
+      taskInput.value = "";
+    }
+  </script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</html>
