@@ -29,9 +29,7 @@ for dirname, _, filenames in os.walk('/kaggle/input'):
 
 
 raw_recipes=pd.read_csv('RAW_recipes.csv')
-raw_recipes.head()
-raw_recipes.columns
-raw_recipes.shape
+
 
 
 # In[4]:
@@ -39,17 +37,13 @@ raw_recipes.shape
 
 raw_interactions=pd.read_csv('RAW_interactions.csv')
 raw_interactions.head()
-raw_interactions.columns
-raw_interactions.shape
+
 
 
 # In[5]:
 
 
 ingr_map = joblib.load("ingr_map.pkl")
-ingr_map.head()
-ingr_map.columns
-ingr_map.shape
 
 
 # In[6]:
@@ -214,25 +208,25 @@ num_cols = ['minutes', 'n_steps', 'n_ingredients', 'calories', 'total fat (PDV)'
 # In[23]:
 
 
-print('outlier analysis for q1=0.01, q3=0.99')
-for col in num_cols:
-    print(f'{col} has outlier {check_outlier(filtered_recipes, col,q1=0.01, q3=0.99)} and values {outlier_thresholds(filtered_recipes,col,q1=0.01, q3=0.99)}')
+# print('outlier analysis for q1=0.01, q3=0.99')
+# for col in num_cols:
+#     print(f'{col} has outlier {check_outlier(filtered_recipes, col,q1=0.01, q3=0.99)} and values {outlier_thresholds(filtered_recipes,col,q1=0.01, q3=0.99)}')
 
 
 # In[24]:
 
 
-print('q1=0.05, q3=0.95 for outlier analysis')
-for col in num_cols:
-    print(f'{col} has outlier {check_outlier(filtered_recipes, col,q1=0.05, q3=0.95)} and values {outlier_thresholds(filtered_recipes,col,q1=0.05, q3=0.95)}')
+# print('q1=0.05, q3=0.95 for outlier analysis')
+# for col in num_cols:
+#     print(f'{col} has outlier {check_outlier(filtered_recipes, col,q1=0.05, q3=0.95)} and values {outlier_thresholds(filtered_recipes,col,q1=0.05, q3=0.95)}')
 
 
 # In[25]:
 
 
-print('q1=0.2, q3=0.8for outlier analysis')
-for col in num_cols:
-    print(f'{col} has outlier {check_outlier(filtered_recipes, col,q1=0.2, q3=0.8)} and values {outlier_thresholds(filtered_recipes,col,q1=0.2, q3=0.8)}')
+# print('q1=0.2, q3=0.8for outlier analysis')
+# for col in num_cols:
+#     print(f'{col} has outlier {check_outlier(filtered_recipes, col,q1=0.2, q3=0.8)} and values {outlier_thresholds(filtered_recipes,col,q1=0.2, q3=0.8)}')
 
 
 # # It was decided to fill the Outlier values with the upper limits of 0.8.
@@ -410,12 +404,6 @@ filtered_recipes.describe()
 
 
 
-print('SEG1 - Less than 40 minutes & Low Calory :',len(filtered_recipes[(filtered_recipes.minutes<=40)&(filtered_recipes.calories<=400)]))
-print('SEG2 - Less than 40 minutes & High Calory :',len(filtered_recipes[(filtered_recipes.minutes<=40)&(filtered_recipes.calories>400)]))
-print('SEG3 - More than 40 minutes & Low Calory :',len(filtered_recipes[(filtered_recipes.minutes>40)&(filtered_recipes.calories<=400)]))
-print('SEG4 - More than 40 minutes & High Calory :',len(filtered_recipes[(filtered_recipes.minutes>40)&(filtered_recipes.calories>400)]))
-
-
 # In[44]:
 
 
@@ -505,9 +493,9 @@ filtered_rows.head(1)
 
 
 # Check one of the mappings, Filter the rows containing 'extra virgin olive oil'
-x = filtered_rows.head(1)['ingredients']
-for y in x:
-    print(y)
+# x = filtered_rows.head(1)['ingredients']
+# for y in x:
+#     print(y)
 
 
 # In[55]:
@@ -537,12 +525,12 @@ filtered_recipes.to_csv('final_repices_all.csv',index=False) #final
 # In[57]:
 
 
-#Let's remember the segment structure and number again
+# #Let's remember the segment structure and number again
 
-print('SEG1 - Less than 40 minutes & Low Calory :',len(filtered_recipes[(filtered_recipes.minutes<=40)&(filtered_recipes.calories<=400)]))
-print('SEG2 - Less than 40 minutes & High Calory :',len(filtered_recipes[(filtered_recipes.minutes<=40)&(filtered_recipes.calories>400)]))
-print('SEG3 - More than 40 minutes & Low Calory :',len(filtered_recipes[(filtered_recipes.minutes>40)&(filtered_recipes.calories<=400)]))
-print('SEG4 - More than 40 minutes & High Calory :',len(filtered_recipes[(filtered_recipes.minutes>40)&(filtered_recipes.calories>400)]))
+# print('SEG1 - Less than 40 minutes & Low Calory :',len(filtered_recipes[(filtered_recipes.minutes<=40)&(filtered_recipes.calories<=400)]))
+# print('SEG2 - Less than 40 minutes & High Calory :',len(filtered_recipes[(filtered_recipes.minutes<=40)&(filtered_recipes.calories>400)]))
+# print('SEG3 - More than 40 minutes & Low Calory :',len(filtered_recipes[(filtered_recipes.minutes>40)&(filtered_recipes.calories<=400)]))
+# print('SEG4 - More than 40 minutes & High Calory :',len(filtered_recipes[(filtered_recipes.minutes>40)&(filtered_recipes.calories>400)]))
 
 
 # In[58]:
@@ -631,8 +619,8 @@ user_input = [ 'sugar','cream','bread','chocolate','strawberry']
 seg1_vectorizer, seg1_tfidf_matrix = tf_idf_vectorizer(seg1,'merged_tags_ingredients')
 
 
-similar_top5_indices=get_similar_top5(seg1_vectorizer,seg1_tfidf_matrix,user_input)
-get_details_top5(seg1,similar_top5_indices)
+# similar_top5_indices=get_similar_top5(seg1_vectorizer,seg1_tfidf_matrix,user_input)
+# get_details_top5(seg1,similar_top5_indices)
 
 
 # In[65]:
@@ -656,8 +644,7 @@ pickle.dump(seg1_tfidf_matrix, open('seg1_tfidf_matrix.pkl', 'wb'))
 seg2_vectorizer, seg2_tfidf_matrix = tf_idf_vectorizer(seg2,'merged_tags_ingredients')
 
 #Recommending the top 5 recipes based on the user input entered
-similar_top5_indices=get_similar_top5(seg2_vectorizer,seg2_tfidf_matrix,user_input)
-get_details_top5(seg2,similar_top5_indices)
+
 
 
 # In[67]:
@@ -675,8 +662,8 @@ pickle.dump(seg2_tfidf_matrix, open('seg2_tfidf_matrix.pkl', 'wb'))
 seg3_vectorizer, seg3_tfidf_matrix = tf_idf_vectorizer(seg3,'merged_tags_ingredients')
 
 #Recommending the top 5 recipes based on the user input entered
-similar_top5_indices=get_similar_top5(seg3_vectorizer,seg3_tfidf_matrix,user_input)
-get_details_top5(seg3,similar_top5_indices)
+# similar_top5_indices=get_similar_top5(seg3_vectorizer,seg3_tfidf_matrix,user_input)
+# get_details_top5(seg3,similar_top5_indices)
 
 
 # In[69]:
@@ -694,8 +681,8 @@ pickle.dump(seg3_tfidf_matrix, open('seg3_tfidf_matrix.pkl', 'wb'))
 seg4_vectorizer, seg4_tfidf_matrix = tf_idf_vectorizer(seg4,'merged_tags_ingredients')
 
 #Recommending the top 5 recipes based on the user input entered
-similar_top5_indices = get_similar_top5(seg4_vectorizer,seg4_tfidf_matrix,user_input)
-get_details_top5(seg4,similar_top5_indices)
+# similar_top5_indices = get_similar_top5(seg4_vectorizer,seg4_tfidf_matrix,user_input)
+# get_details_top5(seg4,similar_top5_indices)
 
 
 # In[71]:
