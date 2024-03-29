@@ -76,7 +76,7 @@
 
     .ingredients {
       max-height: auto;
-      max-width: 80%;
+      max-width: 100%;
       padding: 15px;
       border: black 1px solid;
       border-radius: 5px;
@@ -100,6 +100,23 @@
       transform: scale(1.05);
       /* Scale up the card on hover */
     }
+
+    .dropdown {
+      margin-bottom: 20px;
+      /* margin-left: 50px; */
+    }
+
+    .dropdown .btn {
+      border: 1px solid black;
+      background-color: #7ccfb2;
+    }
+
+    .dropdown .btn:hover {
+      background-color: #7caccf;
+    }
+    #selectedCategoryDisplay{
+      font-weight: bolder;
+    }
   </style>
 </head>
 
@@ -111,7 +128,7 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary mx-5 my-2" style="background-color: #7caccf;">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Veggify</a>
-      <form class="d-flex" action="{{url_for('predict')}}" method="POST"  role="search">
+      <form class="d-flex" action="{{url_for('predict')}}" method="POST" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
@@ -140,15 +157,30 @@
     <h1>Recipes that make your taste buds sing.</h1>
     <p>Cook like a pro with our help</p>
   </div>
+  <!-- category -->
+
 
   <!-- Ingredients  list-->
 
   <div class="todo-container ">
     <form class="flex " action="{{url_for('search')}}" method="POST" role="search">
+      <div class="dropdown ">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Select Category
+        </button>
+        <ul class="dropdown-menu" required >
+          <li><a class="dropdown-item" href="#">Less than 40 minutes & Low Calory</a></li>
+          <li><a class="dropdown-item" href="#">Less than 40 minutes & High Calory</a></li>
+          <li><a class="dropdown-item" href="#">More than 40 minutes & Low Calory</a></li>
+          <li><a class="dropdown-item" href="#">More than 40 minutes & High Calory</a></li>
+        </ul>
+      </div>
       <input class="form-control me-2" type="search" id="taskInput" placeholder="Add your Ingredients"
         aria-label="Search">
       <button class="btn btn-outline-success my-2" onclick="addTask(event)">Add</button>
       <div class="ingredients my-3">
+        <p id="selectedCategoryDisplay">Category selected: </p>
+
         <p style="font-size: large;">Ingredients:</p>
         <ul id="taskList">
           <!-- Tasks will be added dynamically here -->
@@ -180,6 +212,26 @@
       taskList.appendChild(li);
       taskInput.value = "";
     }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+    // Get all dropdown items
+    var dropdownItems = document.querySelectorAll(".dropdown-item");
+
+    // Loop through each dropdown item and attach click event listener
+    dropdownItems.forEach(function (item) {
+      item.addEventListener("click", function () {
+        // Get the text content of the clicked item
+        var selectedCategory = this.textContent.trim();
+        console.log("Selected category:", selectedCategory);
+        
+        // Update the display with the selected category
+        document.getElementById("selectedCategoryDisplay").textContent = "Category selected: " + selectedCategory;
+      });
+    });
+  });
+
+
   </script>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

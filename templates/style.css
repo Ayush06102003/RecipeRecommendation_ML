@@ -63,7 +63,7 @@ body {
 
 .ingredients{
     max-height: auto;
-    max-width: 80%;
+    max-width: 100%;
     padding: 15px;
     border: black 1px solid;
     border-radius: 5px;
