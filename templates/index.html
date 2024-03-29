@@ -128,7 +128,7 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary mx-5 my-2" style="background-color: #7caccf;">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Veggify</a>
-      <form class="d-flex" action="{{url_for('predict')}}" method="POST" role="search">
+      <form class="d-flex" action="{{url_for('search')}}" method="POST" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
@@ -159,82 +159,84 @@
   </div>
   <!-- category -->
 
+  <!-- category -->
+
 
   <!-- Ingredients  list-->
-
-  <div class="todo-container ">
-    <form class="flex " action="{{url_for('search')}}" method="POST" role="search">
-      <div class="dropdown ">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Select Category
-        </button>
-        <ul class="dropdown-menu" required >
-          <li><a class="dropdown-item" href="#">Less than 40 minutes & Low Calory</a></li>
-          <li><a class="dropdown-item" href="#">Less than 40 minutes & High Calory</a></li>
-          <li><a class="dropdown-item" href="#">More than 40 minutes & Low Calory</a></li>
-          <li><a class="dropdown-item" href="#">More than 40 minutes & High Calory</a></li>
-        </ul>
-      </div>
-      <input class="form-control me-2" type="search" id="taskInput" placeholder="Add your Ingredients"
-        aria-label="Search">
-      <button class="btn btn-outline-success my-2" onclick="addTask(event)">Add</button>
-      <div class="ingredients my-3">
-        <p id="selectedCategoryDisplay">Category selected: </p>
-
-        <p style="font-size: large;">Ingredients:</p>
-        <ul id="taskList">
-          <!-- Tasks will be added dynamically here -->
-        </ul>
-        <button class="btn btn-outline-success" type="submit">Search</button>
-
-      </div>
+  <div class="todo-container">
+    <form class="flex" id="ingredientForm">
+        <input class="form-control me-2" type="search" id="taskInput" placeholder="Add your Ingredients" aria-label="Search">
+        <button class="btn btn-outline-success my-2" onclick="addTask(event)">Add</button>
+        <div class="ingredients my-3">
+            <p style="font-size: large;">Ingredients:</p>
+            <ul id="taskList">
+                <!-- Tasks will be added dynamically here -->
+            </ul>
+            <button class="btn btn-outline-success" onclick="sendTasksToFlask()" type="submit">Predict</button>
+        </div>
+        <div id="recipeContainer"></div>
     </form>
-  </div>
-  <script>
-    function addTask(event) {
+</div>
+
+<script>
+  var tasks = [];
+
+  function addTask(event) {
       event.preventDefault(); // Prevent the default form submission behavior
-
-      var taskInput = document.getElementById("taskInput");
-      var taskList = document.getElementById("taskList");
-
-      if (taskInput.value === "") {
-        alert("Please enter an ingredient.");
-        return;
+      
+      var taskInput = document.getElementById("taskInput").value;
+      
+      if (taskInput === "") {
+          alert("Please enter an ingredient.");
+          return;
       }
-
+      
+      // Push the task into the tasks array
+      tasks.push(taskInput);
+      
+      var taskList = document.getElementById("taskList");
       var li = document.createElement("li");
-      li.textContent = taskInput.value;
-
-      li.onclick = function () {
-        this.classList.toggle("completed");
+      li.textContent = taskInput;
+      
+      li.onclick = function() {
+          this.classList.toggle("completed");
       };
-
+      
       taskList.appendChild(li);
-      taskInput.value = "";
-    }
+      document.getElementById("taskInput").value = ""; // Clear the input field
+  }
 
+  function sendTasksToFlask() {
+      // Make an AJAX request to Flask
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', '/predict', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+              console.log('Response from server:', xhr.responseText);
+              document.getElementById('recipeContainer').innerHTML = xhr.responseText;
 
-    document.addEventListener("DOMContentLoaded", function () {
-    // Get all dropdown items
-    var dropdownItems = document.querySelectorAll(".dropdown-item");
+              alert('Ingredients successfully sent to the server!');
+          } else if (xhr.readyState === 4 && xhr.status !== 200) {
+              console.error('Error sending tasks');
+              alert('Error: Unable to send ingredients to the server.');
+          }
+      };
+      xhr.send(JSON.stringify({ tasks: tasks }));
+  }
 
-    // Loop through each dropdown item and attach click event listener
-    dropdownItems.forEach(function (item) {
-      item.addEventListener("click", function () {
-        // Get the text content of the clicked item
-        var selectedCategory = this.textContent.trim();
-        console.log("Selected category:", selectedCategory);
-        
-        // Update the display with the selected category
-        document.getElementById("selectedCategoryDisplay").textContent = "Category selected: " + selectedCategory;
-      });
-    });
+  // Add event listener to the form for manual submission
+  document.getElementById("ingredientForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent the default form submission behavior
+      sendTasksToFlask(); // Call the function to send tasks to Flask
   });
 
+  function renderHTML(htmlContent) {
+        // Render the received HTML content
+        document.body.innerHTML = htmlContent;
+    }
+</script>
 
-  </script>
+
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
 </html>
