@@ -1,42 +1,41 @@
-import pickle, json, _json
-from flask import Flask, render_template, jsonify, request
+import pickle
+from flask import Flask, render_template, request, jsonify, session
 from recipe import get_similar_top5, get_details_top5, seg4
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Set a secret key for sessions
 
 seg4_vectorizer = pickle.load(open('seg4_vectorizer.pkl', 'rb'))
 seg4_tfidf_matrix = pickle.load(open('seg4_tfidf_matrix.pkl', 'rb'))
 
-
-
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Receive the input data (tasks) from the frontend
-    tasks_data = request.data.decode('utf-8')  # Decode bytes to string
-    tasks_list = tasks_data.split(',')  # Assuming tasks are comma-separated
+    tasks_data = request.json.get('tasks', [])  
+    tasks_list = [task.strip() for task in tasks_data if task.strip()] 
     
-    # Process the tasks list as needed
-    print("Received tasks:", tasks_list)
-    
-    # Use the loaded vectorizer and TF-IDF matrix to make recommendations
     similar_top5_indices = get_similar_top5(seg4_vectorizer, seg4_tfidf_matrix, tasks_list)
     recommended_details = get_details_top5(seg4, similar_top5_indices)
     
-    # Return the top 5 recommended recipes as JSON to the frontend
     recommended_list = recommended_details.to_dict(orient='records')
     
-    # Print the recommended list
-    print("Recommended list:", recommended_list)
+    # Store the recommended_list data in the session
+    session['recommended_list'] = recommended_list
     
     return render_template('recipe.html', recommended_list=recommended_list)
 
-    
+@app.route('/display', methods=['GET'])
+def display():
+    # Retrieve the recommended_list data from the session
+    recommended_list = session.get('recommended_list', [])
+    return render_template('recipe.html', recommended_list=recommended_list)
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
 @app.route('/search', methods=['POST'])
 def search():
+    pass
     pass
 
 if __name__ == "__main__":
