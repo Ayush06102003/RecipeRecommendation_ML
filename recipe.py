@@ -510,7 +510,7 @@ filtered_recipes['merged_tags_ingredients'] = filtered_recipes['merged_tags_ingr
 filtered_recipes.head(2)
 
 
-# #### Nihai recipe dataframí bir csv ye export edilir.
+
 
 # In[56]:
 
@@ -543,6 +543,7 @@ seg3=filtered_recipes[(filtered_recipes.minutes>40)&(filtered_recipes.calories<=
 seg4=filtered_recipes[(filtered_recipes.minutes>40)&(filtered_recipes.calories>400)]
 
 
+
 # In[59]:
 
 
@@ -554,10 +555,11 @@ seg4.set_index('name', inplace=True)
 
 
 # In[60]:
+seg1.reset_index(inplace=True)
+seg2.reset_index(inplace=True)
+seg3.reset_index(inplace=True)
+seg4.reset_index(inplace=True)
 
-
-index_seg4 = seg4['steps']
-index_seg4
 
 
 # In[61]:
@@ -582,26 +584,50 @@ def tf_idf_vectorizer(dataframe,corpus_col):
     return vectorizer, tfidf_matrix
 
 
-def get_similar_top5(vectorizer,tfidf_matrix,user_input):
+# def get_similar_top5(vectorizer,tfidf_matrix,user_input):
+#     # Transform the user input using the fitted vectorizer
+#     user_input_tfidf = vectorizer.transform(user_input)
+    
+#     # Compute the cosine similarity between user input and recipe corpus
+#     cosine_sim = cosine_similarity(user_input_tfidf, tfidf_matrix)
+    
+#     # Get the indices of top 5 similar recipes
+#     similar_top5 = list(cosine_sim.argsort()[0][-6:])
+    
+#     return similar_top5
+    
+    
+# def get_details_top5(dataframe, similar_top5):
+#     # Get the details of top 5 recommended recipes
+#     recommended_details = dataframe.iloc[similar_top5]
+#     return recommended_details[['name','ingredients_mapped', 'steps', 'minutes']]
+
+# In[63]:
+from collections import Counter
+
+def get_similar_top5(vectorizer, tfidf_matrix, user_input, dataframe):
     # Transform the user input using the fitted vectorizer
     user_input_tfidf = vectorizer.transform(user_input)
-    
+
     # Compute the cosine similarity between user input and recipe corpus
     cosine_sim = cosine_similarity(user_input_tfidf, tfidf_matrix)
+
+    # Get the indices of recipes with similarity above a certain threshold
+    similar_indices = [index for index, sim_score in enumerate(cosine_sim[0])]
+
+    # Prioritize recipes based on the frequency of common ingredients
+    similar_indices.sort(key=lambda x: -sum(1 for ingredient in user_input if ingredient.strip() in dataframe.iloc[x]['ingredients_mapped']))
+
+    # Get the top 5 similar recipes
+    top5_indices = similar_indices[:5]
     
-    # Get the indices of top 5 similar recipes
-    similar_top5 = list(cosine_sim.argsort()[0][-5:])
-    
-    return similar_top5
-    
-    
+    return top5_indices
+
+
 def get_details_top5(dataframe, similar_top5):
     # Get the details of top 5 recommended recipes
     recommended_details = dataframe.iloc[similar_top5]
-    return recommended_details[['ingredients_mapped', 'steps', 'minutes']]
-
-
-# In[63]:
+    return recommended_details[['name', 'ingredients_mapped', 'steps', 'minutes']]
 
 
 #The user_input list to be tested for prediction operations is created
@@ -696,6 +722,38 @@ pickle.dump(seg4_tfidf_matrix, open('seg4_tfidf_matrix.pkl', 'wb'))
 
 
 
+
+
+# %%
+
+user_input = "white pasta"
+filtered_recipes_df = pd.DataFrame(filtered_recipes)
+
+
+
+def search_top5(user_input,filtered_recipes_df):
+    # Initialize TF-IDF vectorizer
+    vcr = TfidfVectorizer()
+
+    # Fit the vectorizer on recipe names
+    tfidf_matrix = vcr.fit_transform(filtered_recipes_df['name'])  # Assuming 'name' is the column containing recipe names
+
+    # User input recipe name
+
+
+    # Preprocess and transform user input into TF-IDF vector
+    user_tfidf = vcr.transform([user_input])
+
+    # Calculate cosine similarity between user input and all recipe names
+    similarity_scores = cosine_similarity(user_tfidf, tfidf_matrix)
+
+    # Get indices of top-N similar recipes
+    top_indices = similarity_scores.argsort()[0][::-1][:6]  
+
+    # Retrieve top-N similar recipes details
+    top_recipes_details = filtered_recipes_df.iloc[top_indices]
+
+    return(top_recipes_details[['name','ingredients_mapped', 'steps', 'minutes']])  # Print top recipes name and ingredients
 
 
 # %%
